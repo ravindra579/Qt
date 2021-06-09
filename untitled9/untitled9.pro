@@ -10,7 +10,6 @@ CONFIG += c++11
 
 SOURCES += \
     brushtool.cpp \
-    chartview.cpp \
     customslice.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -19,11 +18,11 @@ SOURCES += \
     messagewindow.cpp\
     dataset.cpp\
     field.cpp \
-    rng.cpp
+    rng.cpp\
+    chartview.cpp
 
 HEADERS += \
     brushtool.h \
-    chartview.h \
     customslice.h \
     mainwindow.h \
     pentool.h \
@@ -31,7 +30,8 @@ HEADERS += \
     messagewindow.h\
     dataset.h\
     field.h\
-    rng.h
+    rng.h\
+    chartview.ht
 
 FORMS += \
     dialog.ui \

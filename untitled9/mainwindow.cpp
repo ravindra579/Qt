@@ -713,19 +713,22 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_pushButton_5_clicked()
 {
     ui->plainTextEdit->clear();
+    a_.clear();
+    b_.clear();
+    d_.clear();
 //    QString path = QFileDialog::getOpenFileName(this,"Open File");
   //  if(path.isEmpty()) return;
 
-   QFile file(QString::fromStdString(file_path));
+   QFile file(QString::fromStdString("C:/Users/ravin/Documents/aaa.txt"));
     if(!file.open(QIODevice::ReadOnly))
     {
         QMessageBox::critical(this,"Error", file.errorString());
         return;
     }
-    int thresh=500;
-  vector<int> a;
-  vector<int> b;
-  vector<int> d;
+    thresh=500;
+  //vector<int> a_;
+  //vector<int> b_;
+  //vector<int> d_;
     QTextStream stream(&file);
     while(!stream.atEnd()){
         QString line=stream.readLine();
@@ -737,21 +740,21 @@ void MainWindow::on_pushButton_5_clicked()
         ui->plainTextEdit->insertPlainText(line);
         ui->plainTextEdit->insertPlainText("\n");
         ui->plainTextEdit->insertPlainText(QString::number(c));
-        a.push_back(c);
+        a_.push_back(c);
         ui->plainTextEdit->insertPlainText("\n");
         if(c>500){
             ui->plainTextEdit->insertPlainText("Activity found");
             ui->plainTextEdit->insertPlainText("\n");
-            b.push_back(c);
-            d.push_back(c);
+            b_.push_back(c);
+            d_.push_back(c);
         }
         else{
-            b.push_back(thresh);
+            b_.push_back(thresh);
         }
         ui->plainTextEdit->insertPlainText("\n");
     }
     file.close();
-    line_graph(a,b);
+    line_graph(a_,b_,d_);
 
 }
 int MainWindow::bintodec(QString a)
@@ -769,7 +772,7 @@ int MainWindow::bintodec(QString a)
         return dec_value;
 }
 
-void MainWindow::line_graph(vector<int> a,vector<int> b)
+void MainWindow::line_graph(vector<int> a,vector<int> b,vector<int> d)
 {
 /*
     QVector<QString> a;
@@ -842,6 +845,11 @@ void MainWindow::line_graph(vector<int> a,vector<int> b)
     for(int i=0;i<a.size();i++){
       series3->append(i,500);
     }
+    QPen pen2("blue");
+     series3->setPen(pen2);
+     seriesl->setName("Total");
+     series2->setName("Active");
+     series3->setName("Threshold");
      chart2->addSeries(seriesl);
      chart2->addSeries(series2);
      chart2->addSeries(series3);
@@ -850,8 +858,184 @@ void MainWindow::line_graph(vector<int> a,vector<int> b)
      chart2->createDefaultAxes();
      ChartView *chartView2 = new ChartView(chart2);
      QWidget *newTab = new QWidget(ui->tabWidget);
+     QVBoxLayout *vbox = new QVBoxLayout;
+     vbox->addSpacing(10);
+     QPushButton *button=new QPushButton(QObject::tr("&RESET"), newTab);
+     button->setStyleSheet("background:blue;color:white;font:20px;border-radius:4px;padding-left:5px;padding-right:5px");
      ui->tabWidget->addTab(newTab,QString("tab %0").arg(ui->tabWidget->count()+1));
-     QPushButton *button=new QPushButton;
+    // QPushButton *button_=new QPushButton;
      chartView2->resize(1000,500);
-     chartView2->setParent(newTab);
+     vbox->addWidget(chartView2);
+     QHBoxLayout *hbox=new QHBoxLayout;
+     hbox->addSpacing(20);
+     hbox->addWidget(button);
+     hbox->addSpacing(10);
+     QLabel *ql =new QLabel(QObject::tr(
+                                "<b style=color:Green><h2>Active</h2></b>"), newTab);
+     hbox->addWidget(ql);
+     hbox->addSpacing(10);
+     QTextEdit *ac=new QTextEdit;
+     ac->setMaximumHeight(button->height());
+     hbox->addWidget(ac);
+     hbox->addSpacing(10);
+     QLabel *ql1 =new QLabel(QObject::tr("<b style=color:red><h2>Total</h2></b>"), newTab);
+     hbox->addWidget(ql1);
+     hbox->addSpacing(10);
+     QTextEdit *ac1=new QTextEdit;
+     ac1->setMaximumHeight(button->height());
+     hbox->addWidget(ac1);
+     hbox->addSpacing(10);
+     QLabel *ql2 =new QLabel(QObject::tr("<b style=color:blue><h2>Threshold</h2></b>"), newTab);
+     hbox->addWidget(ql2);
+     hbox->addSpacing(10);
+     QTextEdit *ac2=new QTextEdit;
+     ac2->setMaximumHeight(button->height());
+     hbox->addWidget(ac2);
+     hbox->addSpacing(10);
+     vbox->addItem(hbox);
+     newTab->setLayout(vbox);
+     ac->setPlainText(QString::number(d.size()));
+     ac1->setPlainText(QString::number(a.size()));
+     ac2->setPlainText(QString::number(thresh));
+     index=ui->tabWidget->indexOf(newTab);
+     connect(button, &QPushButton::clicked, this, &MainWindow::onButtonClicked);
+
+}
+void MainWindow::onButtonClicked(){
+
+    line_grap(a_,b_,d_);
+}
+void MainWindow::mousePressEvent (QMouseEvent * e) {
+    if(chartView2->chart()->isEnabled()) {
+        auto curPoint = QCursor::pos();
+        curPoint = chartView2->mapFromGlobal(curPoint);
+        auto pickVal = chartView2->mapToScene(curPoint);
+        pickVal = chartView2->chart()->mapFromScene(curPoint);
+        pickVal = chartView2->chart()->mapToValue(curPoint,chartView2->chart()->series().at(0));
+        qDebug() << "Diagram Picked Value : " << pickVal;
+    }
+}
+void MainWindow::line_grap(vector<int> a,vector<int> b,vector<int> d)
+{
+/*
+    QVector<QString> a;
+    a.resize(ui->tableWidget->rowCount());
+    QVector<double> b;
+    QVector<double> d;
+    d.resize(ui->tableWidget->rowCount());
+    int c=0;
+    b.resize(ui->tableWidget->rowCount());
+    for(int i=0;i<ui->tableWidget->rowCount();i++){
+       if(ui->tableWidget->item(i,0)){
+     a[i]=ui->tableWidget->item(i,0)->text();
+     qDebug() <<a[i];
+       }
+       else
+           a[i]=" ";
+
+   if(ui->tableWidget->item(i,1)){
+       if(ui->tableWidget->item(i,1)->text()!=" "){
+     QVariant val=ui->tableWidget->item(i,1)->text();
+     b[i]=val.toDouble();
+
+     if(c<b[i]){
+         c=b[i];
+     }
+     qDebug()<<b[i];
+       }
+       else{
+           b[i]=0;
+           qDebug() <<b[i];
+       }
+   }
+   else{
+       b[i]=0;
+   qDebug() <<b[i];
+    }
+
+   if(ui->tableWidget->item(i,0)){
+       if(ui->tableWidget->item(i,0)->text()!=" "){
+     QVariant val1=ui->tableWidget->item(i,0)->text();
+     d[i]=val1.toDouble();
+     qDebug() <<d[i];
+       }
+       else{
+           d[i]=0;
+       }
+   }
+   else{
+       d[i]=0;
+    }
+
+    }
+    */
+    QLineSeries *seriesl = new QLineSeries();
+    for(int i=0;i<a.size();i++){
+        seriesl->append(i,a[i]);
+    }
+    seriesl->pointLabelsVisible();
+
+    QLineSeries *series2=new QLineSeries();
+    for(int i=0;i<a.size();i++){
+        series2->append(i,b[i]);
+    }
+    QPen pen("red");
+    pen.setWidth(3);
+    seriesl->setPen(pen);
+    QPen pen1("green");
+    pen1.setWidth(4);
+     series2->setPen(pen1);
+     QChart *chart2 = new QChart();
+    QLineSeries *series3=new QLineSeries();
+    for(int i=0;i<a.size();i++){
+      series3->append(i,500);
+    }
+     chart2->addSeries(seriesl);
+     chart2->addSeries(series2);
+     chart2->addSeries(series3);
+     chart2->setTitle("BarChart Example In Qt5 C++ ");
+     chart2->setAnimationOptions(QChart::SeriesAnimations);
+     chart2->createDefaultAxes();
+     ChartView *chartView2 = new ChartView(chart2);
+     QWidget *newTab = new QWidget(ui->tabWidget);
+     QVBoxLayout *vbox = new QVBoxLayout;
+     vbox->addSpacing(10);
+     QPushButton *button=new QPushButton(QObject::tr("&RESET"), newTab);
+
+     ui->tabWidget->addTab(newTab,QString("tab %0").arg(ui->tabWidget->count()));
+    // QPushButton *button_=new QPushButton;
+     chartView2->resize(1000,500);
+     vbox->addWidget(chartView2);
+     QHBoxLayout *hbox=new QHBoxLayout;
+     hbox->addWidget(button);
+     hbox->addSpacing(10);
+     QLabel *ql =new QLabel(QObject::tr("Active"), newTab);
+     hbox->addWidget(ql);
+     hbox->addSpacing(10);
+     QTextEdit *ac=new QTextEdit;
+     ac->setMaximumHeight(button->height());
+     hbox->addWidget(ac);
+     hbox->addSpacing(10);
+     QLabel *ql1 =new QLabel(QObject::tr("Total"), newTab);
+     hbox->addWidget(ql1);
+     hbox->addSpacing(10);
+     QTextEdit *ac1=new QTextEdit;
+     ac1->setMaximumHeight(button->height());
+     hbox->addWidget(ac1);
+     hbox->addSpacing(10);
+     QLabel *ql2 =new QLabel(QObject::tr("Treshold"), newTab);
+     hbox->addWidget(ql2);
+     hbox->addSpacing(10);
+     QTextEdit *ac2=new QTextEdit;
+     ac2->setMaximumHeight(button->height());
+     hbox->addWidget(ac2);
+     hbox->addSpacing(10);
+     vbox->addItem(hbox);
+     newTab->setLayout(vbox);
+     ac->setPlainText(QString::number(d.size()));
+     ac1->setPlainText(QString::number(a.size()));
+     ac2->setPlainText(QString::number(thresh));
+     ui->tabWidget->removeTab(index);
+     connect(button, &QPushButton::clicked, this, &MainWindow::onButtonClicked);
+
 }

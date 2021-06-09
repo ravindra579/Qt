@@ -13,6 +13,7 @@
 #include <field.h>
 #include <dataset.h>
 #include <fstream>
+#include<chartview.h>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -44,6 +45,12 @@ public:
     ~MainWindow();
     vector<int> *z[2];
     string file_path;
+    vector<int> a_;
+    vector<int> b_;
+    vector<int> d_;
+    QWidget *newTab;
+    int index;
+    int thresh;
 protected:
 
 signals:
@@ -78,13 +85,17 @@ private slots:
 
     void on_pushButton_5_clicked();
     int bintodec(QString a);
-    void line_graph(vector<int> a,vector<int> b);
+    void line_graph(vector<int> a,vector<int> b,vector<int> d);
+    void mousePressEvent(QMouseEvent * e);
+    void line_grap(vector<int> a,vector<int> b,vector<int> d);
+    void onButtonClicked();
 private:
     Ui::MainWindow *ui;
      QHBoxLayout *horizontalLayout;
      QTimer *timer;
      QString file_name;
      int m=10;
+     ChartView *chartView2;
      std::vector<std::string> initHeaderFields;
 };
 #endif // MAINWINDOW_H
