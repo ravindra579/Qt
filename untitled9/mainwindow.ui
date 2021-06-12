@@ -51,42 +51,9 @@
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <widget class="QFrame" name="gridFrame">
-             <widget class="QComboBox" name="comboBox">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>131</width>
-                <height>22</height>
-               </rect>
-              </property>
-             </widget>
-            </widget>
-            <widget class="QFrame" name="gridFrame1">
-             <widget class="QComboBox" name="comboBox_2">
-              <property name="geometry">
-               <rect>
-                <x>9</x>
-                <y>9</y>
-                <width>121</width>
-                <height>22</height>
-               </rect>
-              </property>
-             </widget>
-            </widget>
-            <widget class="QFrame" name="gridFrame">
-             <widget class="QComboBox" name="comboBox_3">
-              <property name="geometry">
-               <rect>
-                <x>9</x>
-                <y>9</y>
-                <width>111</width>
-                <height>22</height>
-               </rect>
-              </property>
-             </widget>
-            </widget>
+            <widget class="QFrame" name="gridFrame"/>
+            <widget class="QFrame" name="gridFrame1"/>
+            <widget class="QFrame" name="gridFrame"/>
            </widget>
           </item>
          </layout>

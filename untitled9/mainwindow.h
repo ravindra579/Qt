@@ -14,6 +14,8 @@
 #include <dataset.h>
 #include <fstream>
 #include<chartview.h>
+#include<QComboBox>
+#include<map>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -48,9 +50,13 @@ public:
     vector<int> a_;
     vector<int> b_;
     vector<int> d_;
+    vector<int> e_;
     QWidget *newTab;
     int index;
     int thresh;
+    int x;
+    int y;
+   map<int,int> imp;
 protected:
 
 signals:
@@ -87,8 +93,12 @@ private slots:
     int bintodec(QString a);
     void line_graph(vector<int> a,vector<int> b,vector<int> d);
     void mousePressEvent(QMouseEvent * e);
-    void line_grap(vector<int> a,vector<int> b,vector<int> d);
     void onButtonClicked();
+    void textchanged();
+    void textchangedd();
+    void compare(int n,int n1);
+    int ndigits(int a);
+    void comparee();
 private:
     Ui::MainWindow *ui;
      QHBoxLayout *horizontalLayout;
